@@ -2,9 +2,20 @@ import { useEffect, useState, useContext, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { MdFavorite, MdFavoriteBorder, MdArrowBack, MdEditSquare, MdDelete } from "react-icons/md";
-import axios from "axios";
 import api from "../services/api";
 import { AuthContext } from "../contexts/AuthContext";
+import L from 'leaflet';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 function DetalhesImovel() {
   const [imovel, setImovel] = useState(null);
