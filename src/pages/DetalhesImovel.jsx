@@ -52,13 +52,7 @@ function DetalhesImovel() {
       setAcesso(true);
       setImovel(imovelData);
 
-      const geoRes = await axios.get(`https://nominatim.openstreetmap.org/search`, {
-        params: {
-          q: imovelData.endereco,
-          format: "json",
-        },
-      });
-
+      const geoRes = await api.get(`/geocode/${encodeURIComponent(imovelData.endereco)}`);
       if (geoRes.data && geoRes.data.length > 0) {
         const { lat, lon } = geoRes.data[0];
         setCoordenadas({ lat: parseFloat(lat), lon: parseFloat(lon) });
