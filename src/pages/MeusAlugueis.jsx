@@ -120,9 +120,11 @@ function AlugueisEstudante() {
     <div className="alugueis-estudante-container">
       <h2>Meus Aluguéis</h2>
 
-      {alugueisPendentes.length > 0 && (
-        <section className="aluguel-pendente">
-          <h3>Aluguel Pendente</h3>
+      <section className="aluguel-pendente">
+        <h3>Aluguel Pendente</h3>
+        {alugueisPendentes.length === 0 ? (
+          <p>Nenhum aluguel pendente.</p>
+        ) : (
           <table>
             <thead>
               <tr>
@@ -174,12 +176,14 @@ function AlugueisEstudante() {
               ))}
             </tbody>
           </table>
-        </section>
-      )}
+        )}
+      </section>
 
-      {alugueisAlugados.length > 0 && (
-        <section className="aluguel-ativo">
-          <h3>Aluguéis Ativos</h3>
+      <section className="aluguel-ativo">
+        <h3>Aluguéis Ativos</h3>
+        {alugueisAlugados.length === 0 ? (
+          <p>Nenhum aluguel ativo.</p>
+        ) : (
           <table>
             <thead>
               <tr>
@@ -212,44 +216,41 @@ function AlugueisEstudante() {
               ))}
             </tbody>
           </table>
-        </section>
+        )}
+      </section>
 
-      )}
-
-      {alugueisPassados.length > 0 && (
-        <section className="alugueis-passados">
-          <h3>Histórico de Aluguéis</h3>
-          {alugueisPassados.length === 0 ? (
-            <p>Nenhum aluguel anterior.</p>
-          ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Título</th>
-                  <th>Data Início</th>
-                  <th>Status</th>
-                  {usuario.tipo === "proprietario" && <th>Locatário</th>}
-                  <th>Data Fim</th>
+      <section className="alugueis-passados">
+        <h3>Histórico de Aluguéis</h3>
+        {alugueisPassados.length === 0 ? (
+          <p>Nenhum aluguel anterior.</p>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Data Início</th>
+                <th>Status</th>
+                {usuario.tipo === "proprietario" && <th>Locatário</th>}
+                <th>Data Fim</th>
+              </tr>
+            </thead>
+            <tbody>
+              {alugueisPassados.map((aluguel) => (
+                <tr key={aluguel._id}
+                  onClick={usuario.tipo === "proprietario" ? () => navigate(`/imoveis/${aluguel.imovel._id}`) : undefined}>
+                  <td>{aluguel.imovel.titulo}</td>
+                  <td>{new Date(aluguel.dataInicio).toLocaleDateString("pt-BR")}</td>
+                  <td style={{ textTransform: "capitalize" }}>{aluguel.status}</td>
+                  {usuario.tipo === "proprietario" && <td>{aluguel.locatario ? aluguel.locatario.nome : "N/A"}</td>}
+                  <td>
+                    {aluguel.dataFim ? new Date(aluguel.dataFim).toLocaleDateString("pt-BR") : "Ainda em andamento"}
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {alugueisPassados.map((aluguel) => (
-                  <tr key={aluguel._id}
-                    onClick={usuario.tipo === "proprietario" ? () => navigate(`/imoveis/${aluguel.imovel._id}`) : undefined}>
-                    <td>{aluguel.imovel.titulo}</td>
-                    <td>{new Date(aluguel.dataInicio).toLocaleDateString("pt-BR")}</td>
-                    <td style={{ textTransform: "capitalize" }}>{aluguel.status}</td>
-                    {usuario.tipo === "proprietario" && <td>{aluguel.locatario ? aluguel.locatario.nome : "N/A"}</td>}
-                    <td>
-                      {aluguel.dataFim ? new Date(aluguel.dataFim).toLocaleDateString("pt-BR") : "Ainda em andamento"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </section>
-      )}
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
     </div>
   );
 }
