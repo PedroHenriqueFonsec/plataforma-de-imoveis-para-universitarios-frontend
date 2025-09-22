@@ -53,8 +53,8 @@ function DetalhesImovel() {
       setImovel(imovelData);
 
       const geoRes = await api.get(`/geocode/${encodeURIComponent(imovelData.endereco)}`);
-      if (geoRes.data && geoRes.data.length > 0) {
-        const { lat, lon } = geoRes.data[0];
+      if (geoRes.data) {
+        const { lat, lon } = geoRes.data;
         setCoordenadas({ lat: parseFloat(lat), lon: parseFloat(lon) });
       }
     } catch (err) {
