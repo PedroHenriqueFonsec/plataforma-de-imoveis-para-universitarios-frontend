@@ -28,7 +28,7 @@ function EditarImovel() {
   const [imagensNovas, setImagensNovas] = useState({});
   const [coordenadasAtuais, setCoordenadasAtuais] = useState(null);
   const { id } = useParams();
-  const { usuario } = useContext(AuthContext);
+  const { usuario, carregandoAuth } = useContext(AuthContext);
   const [estudantes, setEstudantes] = useState([]);
   const [locatario, setLocatario] = useState(null);
   const [acesso, setAcesso] = useState(false);
@@ -38,20 +38,22 @@ function EditarImovel() {
   const edicaoDesabilitada = form.status === "pendente" || form.status === "alugado" || carregando;
 
   useEffect(() => {
-    if (!usuario || usuario.tipo !== "proprietario") {
-      navigate("/login");
-      return;
-    }
-    if (!token) {
-      alert("Sessão expirada. Faça login novamente.");
-      navigate("/login");
-      return;
+    if (!carregandoAuth) {
+      if (!usuario || usuario.tipo !== "proprietario") {
+        navigate("/login");
+        return;
+      }
+      if (!token) {
+        alert("Sessão expirada. Faça login novamente.");
+        navigate("/login");
+        return;
+      }
     }
     document.title = "Editar Imóvel";
     carregarImovel();
     carregarLocatario();
     carregarEstudantes();
-  }, [usuario, navigate]);
+  }, [usuario, navigate, token, carregandoAuth]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -264,6 +266,8 @@ function EditarImovel() {
       setCarregando(false);
     }
   };
+
+  if (carregando || !usuario) return <p>Carregando imóvel...</p>;
 
   if (!acesso) { return null; }
 

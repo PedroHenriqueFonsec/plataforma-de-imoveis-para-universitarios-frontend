@@ -5,7 +5,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import api from "../services/api";
 
 function Perfil() {
-  const { usuario, logout, atualizarUsuario } = useContext(AuthContext);
+  const { usuario, logout, atualizarUsuario, carregandoAuth } = useContext(AuthContext);
   const [perfil, setPerfil] = useState(null);
   const [form, setForm] = useState({
     nome: "",
@@ -23,12 +23,14 @@ function Perfil() {
 
   useEffect(() => {
     document.title = "Meu Perfil";
-    if (!usuario) {
-      navigate("/login");
-      return;
+    if (!carregandoAuth) {
+      if (!usuario) {
+        navigate("/login");
+        return;
+      }
     }
     carregarPerfil();
-  }, [usuario, navigate]);
+  }, [usuario, navigate, carregandoAuth]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -161,9 +163,9 @@ function Perfil() {
     navigate("/login");
   };
 
-  if (!usuario || !perfil) return <p>Não foi possível carregar os dados do perfil.</p>;
-
   if (carregando || !usuario) return <p>Carregando perfil...</p>;
+
+  if (!usuario || !perfil) return <p>Não foi possível carregar os dados do perfil.</p>;
 
   return (
     <div className="perfil-container">

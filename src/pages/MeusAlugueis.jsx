@@ -8,17 +8,19 @@ function AlugueisEstudante() {
   const [alugueisAlugados, setAlugueisAlugados] = useState([]);
   const [alugueisPassados, setAlugueisPassados] = useState([]);
   const [carregando, setCarregando] = useState(true);
-  const { usuario } = useContext(AuthContext);
+  const { usuario, carregandoAuth } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Meus Aluguéis";
-    if (!usuario) {
-      navigate("/login");
-      return;
+    if (!carregandoAuth) {
+      if (!usuario) {
+        navigate("/login");
+        return;
+      }
+      buscarAlugueis();
     }
-    buscarAlugueis();
-  }, [usuario, navigate]);
+  }, [usuario, navigate, carregandoAuth]);
 
   const buscarAlugueis = async () => {
     try {
@@ -113,9 +115,10 @@ function AlugueisEstudante() {
     }
   };
 
-  if (!usuario) {
-    return <p>Carregando...</p>;
-  }
+  if (carregando || !usuario) return <p>Carregando aluguéis...</p>;
+
+  if (!usuario) return <p>Não foi possível carregar os aluguéis.</p>;
+
   return (
     <div className="alugueis-estudante-container">
       <h2>Meus Aluguéis</h2>

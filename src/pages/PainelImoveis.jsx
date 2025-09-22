@@ -32,7 +32,8 @@ function PainelImoveis() {
   const [estudanteSelecionado, setEstudanteSelecionado] = useState("");
   const [mostrarListaEstudante, setMostrarListaEstudante] = useState(false);
   const [imovelSelecionado, setImovelSelecionado] = useState(null);
-  const { usuario } = useContext(AuthContext);
+  const [carregando, setCarregando] = useState(true);
+  const { usuario, carregandoAuth } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const buscarImoveis = useCallback(async () => {
@@ -69,6 +70,8 @@ function PainelImoveis() {
     } catch (err) {
       const mensagem = err.response?.data?.mensagem || "Erro ao carregar imóveis!";
       alert("Erro: " + mensagem);
+    } finally {
+      setCarregando(false);
     }
   }, [
     tipo,
@@ -105,13 +108,15 @@ function PainelImoveis() {
 
   useEffect(() => {
     document.title = "Meus Imóveis";
-    if (!usuario || usuario.tipo !== "proprietario") {
-      navigate("/login");
-      return;
+    if (!carregandoAuth) {
+      if (!usuario || usuario.tipo !== "proprietario") {
+        navigate("/login");
+        return;
+      }
     }
     debouncedBuscar();
     return () => debouncedBuscar.cancel();
-  }, [usuario, navigate, debouncedBuscar]);
+  }, [usuario, navigate, debouncedBuscar, carregandoAuth]);
 
   const limparFiltros = () => {
     setBusca("");
@@ -212,6 +217,8 @@ function PainelImoveis() {
       alert("Erro: " + mensagem);
     }
   };
+
+  if (carregando) return <p>Carregando seus imóveis...</p>;
 
   return (
     <div className="painel-container">

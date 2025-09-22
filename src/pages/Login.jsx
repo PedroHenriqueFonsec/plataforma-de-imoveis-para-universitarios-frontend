@@ -9,15 +9,17 @@ function Login() {
   const [senha, setSenha] = useState("");
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [carregando, setCarregando] = useState(false);
-  const { login, usuario } = useContext(AuthContext);
+  const { login, usuario, carregandoAuth } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Login";
-    if (usuario) {
-      navigate("/home");
+    if (!carregandoAuth) {
+      if (usuario) {
+        navigate("/home");
+      }
     }
-  }, [usuario, navigate]);
+  }, [usuario, navigate, carregandoAuth]);
 
   const handleLogin = async (e) => {
     e.preventDefault();

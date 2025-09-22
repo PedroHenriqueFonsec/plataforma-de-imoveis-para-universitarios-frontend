@@ -5,6 +5,7 @@ export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [usuario, setUsuario] = useState(null);
+  const [carregandoAuth, setCarregandoAuth] = useState(true);
   const navigate = useNavigate();
 
   const isTokenExpired = (token) => {
@@ -51,17 +52,16 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userData = localStorage.getItem("usuario");
-    if (!token || isTokenExpired(token)) {
-      logout();
-      return;
-    }
-    if (userData) {
+    if (token && !isTokenExpired(token) && userData) {
       setUsuario(JSON.parse(userData));
+    } else {
+      logout();
     }
+    setCarregandoAuth(false);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ usuario, login, logout, atualizarUsuario }}>
+    <AuthContext.Provider value={{ usuario, login, logout, atualizarUsuario, carregandoAuth }}>
       {children}
     </AuthContext.Provider>
   );

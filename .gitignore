@@ -18,7 +18,7 @@ build/
 .vite-cache/
 *.local
 
-# env files
+# Env files
 .env
 .env.*
 !.env.example

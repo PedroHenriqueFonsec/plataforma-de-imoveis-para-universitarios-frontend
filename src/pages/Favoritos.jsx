@@ -30,7 +30,8 @@ function Favoritos() {
   const [ordem, setOrdem] = useState("desc");
   const [pagina, setPagina] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
-  const { usuario } = useContext(AuthContext);
+  const [carregando, setCarregando] = useState(true);
+  const { usuario, carregandoAuth } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const buscarFavoritos = useCallback(async () => {
@@ -77,6 +78,8 @@ function Favoritos() {
     } catch (err) {
       const mensagem = err.response?.data?.mensagem || "Erro ao buscar favoritos!";
       alert("Erro: " + mensagem);
+    } finally {
+      setCarregando(false);
     }
   }, [
     tipo,
@@ -117,13 +120,15 @@ function Favoritos() {
 
   useEffect(() => {
     document.title = "Meus Favoritos";
-    if (!usuario || usuario.tipo !== "estudante") {
-      navigate("/login");
-      return;
+    if (!carregandoAuth) {
+      if (!usuario || usuario.tipo !== "estudante") {
+        navigate("/login");
+        return;
+      }
     }
     debouncedFavoritar();
     return () => debouncedFavoritar.cancel();
-  }, [usuario, navigate, debouncedFavoritar]);
+  }, [usuario, navigate, debouncedFavoritar, carregandoAuth]);
 
   const handleVerDetalhes = (id) => {
     navigate(`/imoveis/${id}`);
@@ -156,6 +161,8 @@ function Favoritos() {
     setOrdenarPor("createdAt");
     setPagina(1);
   };
+
+  if (carregando) return <p>Carregando imóveis favoritos...</p>;
 
   return (
     <div className="home-container">

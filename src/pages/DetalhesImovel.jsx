@@ -4,10 +4,10 @@ import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import { MdFavorite, MdFavoriteBorder, MdArrowBack, MdEditSquare, MdDelete } from "react-icons/md";
 import api from "../services/api";
 import { AuthContext } from "../contexts/AuthContext";
-import L from 'leaflet';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import L from "leaflet";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -25,18 +25,20 @@ function DetalhesImovel() {
   const [locatario, setLocatario] = useState(null);
   const [acesso, setAcesso] = useState(false);
   const { id } = useParams();
-  const { usuario } = useContext(AuthContext);
+  const { usuario, carregandoAuth } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Detalhes do Imóvel";
-    if (!usuario) {
-      navigate("/login");
-      return;
+    if (!carregandoAuth) {
+      if (!usuario) {
+        navigate("/login");
+        return;
+      }
     }
     buscarImovel();
     buscarLocatario();
-  }, [id, usuario, navigate]);
+  }, [id, usuario, navigate, carregandoAuth]);
 
   const buscarImovel = useCallback(async () => {
     try {
@@ -154,7 +156,7 @@ function DetalhesImovel() {
     window.open(url, "_blank");
   };
 
-  if (carregando) return <p>Carregando detalhes...</p>;
+  if (carregando) return <p>Carregando detalhes do imóvel...</p>;
 
   if (!imovel) return <p>Imóvel não encontrado.</p>;
 

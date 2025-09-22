@@ -30,7 +30,8 @@ function Home() {
   const [ordem, setOrdem] = useState("desc");
   const [pagina, setPagina] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
-  const { usuario } = useContext(AuthContext);
+  const [carregando, setCarregando] = useState(true);
+  const { usuario, carregandoAuth } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const buscarImoveis = useCallback(async () => {
@@ -77,6 +78,8 @@ function Home() {
     } catch (err) {
       const mensagem = err.response?.data?.mensagem || "Erro ao carregar imóveis! ";
       alert("Erro: " + mensagem);
+    } finally {
+      setCarregando(false);
     }
   }, [
     tipo,
@@ -117,13 +120,15 @@ function Home() {
 
   useEffect(() => {
     document.title = "Home";
-    if (!usuario) {
-      navigate("/login");
-      return;
+    if (!carregandoAuth) {
+      if (!usuario) {
+        navigate("/login");
+        return;
+      }
     }
     debouncedBuscar();
     return () => debouncedBuscar.cancel();
-  }, [usuario, navigate, debouncedBuscar]);
+  }, [usuario, navigate, debouncedBuscar, carregandoAuth]);
 
   const handleVerDetalhes = (id) => {
     navigate(`/imoveis/${id}`);
@@ -160,6 +165,8 @@ function Home() {
     setOrdenarPor("createdAt");
     setPagina(1);
   };
+
+  if (carregando) return <p>Carregando imóveis...</p>;
 
   return (
     <div className="home-container">

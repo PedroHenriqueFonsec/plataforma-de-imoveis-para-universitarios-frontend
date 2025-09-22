@@ -4,10 +4,10 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { AuthContext } from "../contexts/AuthContext";
 import api from "../services/api";
-import L from 'leaflet';
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import L from "leaflet";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -36,24 +36,25 @@ function CadastroImovel() {
   const [carregando, setCarregando] = useState(false);
   const [imagens, setImagens] = useState({});
   const inputRefs = useRef([]);
-  const { usuario } = useContext(AuthContext);
+  const { usuario, carregandoAuth } = useContext(AuthContext);
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!usuario || usuario.tipo !== "proprietario") {
-      navigate("/login");
-      return;
-    }
+    if (!carregandoAuth) {
+      if (!usuario || usuario.tipo !== "proprietario") {
+        navigate("/login");
+        return;
+      }
 
-    if (!token) {
-      alert("Sessão expirada. Faça login novamente.");
-      navigate("/login");
-      return;
+      if (!token) {
+        alert("Sessão expirada. Faça login novamente.");
+        navigate("/login");
+        return;
+      }
     }
-
     document.title = "Cadastro de Imóvel";
-  }, [usuario, navigate, token]);
+  }, [usuario, navigate, token, carregandoAuth]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -432,6 +433,7 @@ function CadastroImovel() {
           type="button"
           onClick={() => navigate(-1)}
           className="exit-button"
+          disabled={carregando}
         >
           Cancelar
         </button>
