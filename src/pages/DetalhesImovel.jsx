@@ -52,7 +52,10 @@ function DetalhesImovel() {
       setAcesso(true);
       setImovel(imovelData);
 
-      const geoRes = await api.get(`/geocode/${encodeURIComponent(imovelData.endereco)}`);
+      const geoRes = await api.get(`/geocode`, {
+        params: { endereco: imovelData.endereco }
+      });
+
       if (geoRes.data) {
         const { lat, lon } = geoRes.data;
         setCoordenadas({ lat: parseFloat(lat), lon: parseFloat(lon) });
